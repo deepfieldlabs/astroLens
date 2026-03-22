@@ -10,10 +10,12 @@ from .cross_reference import (
     CrossReferenceResult,
     cross_reference_anomaly,
 )
+from .skymap_export import export_skymap_json
 
 __all__ = [
     "CatalogCrossReference",
-    "CatalogMatch", 
+    "CatalogMatch",
     "CrossReferenceResult",
     "cross_reference_anomaly",
+    "export_skymap_json",
 ]
