@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/samantaba/astroLens/stargazers"><img src="https://img.shields.io/github/stars/samantaba/astroLens?style=social" alt="Stars"></a>
-  <img src="https://img.shields.io/badge/version-1.1.0-blue" alt="Version">
+  <img src="https://img.shields.io/badge/version-1.2.0-blue" alt="Version">
   <img src="https://img.shields.io/badge/python-3.10%2B-green" alt="Python">
   <img src="https://img.shields.io/badge/license-MIT-yellow" alt="License">
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey" alt="Platform">
@@ -391,6 +391,27 @@ What the streaming engine does:
 - Produces a **publishing-ready summary** of the best candidates
 
 Reports are saved to `astrolens_artifacts/streaming_reports/`.
+
+---
+
+## MitraSETI Radio Integration (v1.2.0)
+
+AstroLens now integrates with [MitraSETI](https://github.com/deepfieldlabs/MitraSETI), enabling **optical + radio cross-reference** for multi-modal discovery:
+
+1. **AstroLens** exports a coordinate-enriched catalog of optical anomalies via `catalog/skymap_export.py`
+2. **MitraSETI** loads this catalog and overlays optical detections on its radio sky map
+3. **Astropy SkyCoord cross-matching** identifies coincident optical anomalies and radio signals using KD-tree spatial indexing
+4. Both tools can be run independently — the shared data format (`skymap_export.json`) bridges them
+
+```bash
+# Export AstroLens detections for MitraSETI sky map
+python -m catalog.skymap_export --artifacts-dir /path/to/astrolens_artifacts
+
+# In MitraSETI: cross-match radio candidates with AstroLens optical data
+mitraseti crossmatch --radius 120
+```
+
+A narrowband drifting radio signal coincident with an optically anomalous star is far more interesting than either detection alone. This multi-wavelength approach opens discovery pathways that single-instrument analysis cannot achieve.
 
 ---
 

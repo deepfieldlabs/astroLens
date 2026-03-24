@@ -4,15 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "astrolens"
-version = "0.1.0"
-description = "AI-powered image analysis with ML classification and LLM insights"
+version = "1.2.0"
+description = "AI-powered astronomical image anomaly detection with ML classification and SETI integration"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
     {name = "Saman Tabatabaeian", email = "saman.tabatabaeian@gmail.com"}
 ]
-keywords = ["ai", "ml", "image-analysis", "computer-vision", "langchain"]
+keywords = ["astronomy", "seti", "anomaly-detection", "computer-vision", "ai"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -28,7 +28,7 @@ Repository = "https://github.com/samantaba/AstroLens"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["api*", "inference*", "annotator*", "agent*", "ui*"]
+include = ["api*", "inference*", "annotator*", "agent*", "ui*", "catalog*", "features*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

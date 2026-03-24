@@ -144,28 +144,86 @@ class SETISignalAnalyzer:
     ) -> List[RadioSignal]:
         """
         Check for radio signals at given coordinates.
-        
-        This is a placeholder - actual implementation would query:
-        - Breakthrough Listen database
-        - VLA FIRST survey
-        - LOFAR LoTSS
-        
+
+        Queries MitraSETI streaming state and persistence data
+        for radio detections near the given sky position.
+
         Args:
             ra: Right ascension in degrees
             dec: Declination in degrees
             search_radius_arcmin: Search radius in arcminutes
-        
+
         Returns:
             List of RadioSignal objects found
         """
-        # TODO: Implement actual database queries
-        # For now, return empty list (no radio data available)
         logger.info(f"Checking radio signals at RA={ra:.4f}, Dec={dec:.4f}")
-        
-        # Placeholder - would query actual databases
+
         signals = []
-        
+
+        # Load MitraSETI candidates from shared artifacts
+        try:
+            mitraseti_path = self._get_mitraseti_candidates_path()
+            if mitraseti_path and mitraseti_path.exists():
+                import json
+                with open(mitraseti_path) as f:
+                    data = json.load(f)
+                    candidates = data if isinstance(data, list) else data.get("candidates", [])
+
+                for c in candidates:
+                    c_ra = c.get("ra", c.get("ra_deg", 0))
+                    c_dec = c.get("dec", c.get("dec_deg", 0))
+                    if c_ra == 0 and c_dec == 0:
+                        continue
+
+                    sep = self._angular_separation_arcmin(ra, dec, c_ra, c_dec)
+                    if sep <= search_radius_arcmin:
+                        sig = RadioSignal(
+                            source_id=c.get("source_name", "MitraSETI"),
+                            ra=c_ra,
+                            dec=c_dec,
+                            frequency_mhz=c.get("frequency_hz", 0) / 1e6,
+                            is_narrowband=True,
+                            has_doppler_drift=abs(c.get("drift_rate", 0)) > 0.01,
+                            drift_rate_hz_s=c.get("drift_rate", 0),
+                            signal_type="candidate" if c.get("is_candidate") else "unknown",
+                            telescope="GBT",
+                            dataset="breakthrough_listen",
+                        )
+                        signals.append(sig)
+        except Exception as e:
+            logger.debug(f"MitraSETI data unavailable: {e}")
+
         return signals
+
+    @staticmethod
+    def _angular_separation_arcmin(
+        ra1: float, dec1: float, ra2: float, dec2: float
+    ) -> float:
+        """Haversine angular separation in arcminutes."""
+        import math
+        ra1_r, dec1_r = math.radians(ra1), math.radians(dec1)
+        ra2_r, dec2_r = math.radians(ra2), math.radians(dec2)
+        dra = ra2_r - ra1_r
+        ddec = dec2_r - dec1_r
+        a = math.sin(ddec / 2) ** 2 + math.cos(dec1_r) * math.cos(dec2_r) * math.sin(dra / 2) ** 2
+        c = 2 * math.asin(min(1.0, math.sqrt(a)))
+        return math.degrees(c) * 60
+
+    @staticmethod
+    def _get_mitraseti_candidates_path() -> Optional[Path]:
+        """Locate MitraSETI streaming state or FITS candidates."""
+        import os
+        base = Path(os.environ.get(
+            "MITRASETI_ARTIFACTS_DIR",
+            Path(__file__).parent.parent.parent / "mitraseti_artifacts",
+        ))
+        streaming = base / "data" / "streaming_state.json"
+        if streaming.exists():
+            return streaming
+        candidates = base / "candidates" / "verified_candidates.json"
+        if candidates.exists():
+            return candidates
+        return None
     
     def create_candidate(
         self,

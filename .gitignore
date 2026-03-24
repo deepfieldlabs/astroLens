@@ -117,6 +117,7 @@ tests/*
 !tests/test_morphology.py
 !tests/test_ui_components.py
 !tests/test_all_features.py
+!tests/test_seti_integration.py
 scripts/test_*.py
 
 # ─────────────────────────────────────────────────────────────────────────────
