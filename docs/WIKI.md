@@ -26,7 +26,8 @@ Comprehensive documentation for AstroLens -- the AI-Powered Galaxy Anomaly Disco
 8. [Web Interface](#web-interface)
 9. [API Reference](#api-reference)
 10. [Build and Distribution](#build-and-distribution)
-11. [Troubleshooting](#troubleshooting)
+11. [MitraSETI Radio Integration](#mitraseti-radio-integration-v120)
+12. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -451,6 +452,50 @@ The YOLO transient model is included via Git LFS at `models/yolo_transient_v1.pt
 ### Log Files
 
 Test logs are saved to `../astrolens_artifacts/test_logs/` with timestamps. Each test run produces both a `.log` file and a `.json` results summary.
+
+---
+
+## MitraSETI Radio Integration (v1.2.0)
+
+AstroLens integrates with [MitraSETI](https://github.com/deepfieldlabs/MitraSETI) for multi-wavelength discovery:
+
+### How It Works
+
+1. **AstroLens** exports a coordinate-enriched catalog of optical anomalies via `catalog/skymap_export.py`
+2. **MitraSETI** loads this catalog and overlays optical detections on its radio sky map
+3. **Astropy SkyCoord cross-matching** identifies coincident optical anomalies and radio signals
+4. The `features/seti_signals.py` module queries MitraSETI streaming state for radio detections near any sky position
+
+### Usage
+
+```bash
+# Export AstroLens detections for MitraSETI
+python -m catalog.skymap_export --artifacts-dir /path/to/astrolens_artifacts
+
+# In MitraSETI: cross-match radio candidates with AstroLens
+mitraseti crossmatch --radius 120
+```
+
+### Data Flow
+
+```
+AstroLens                          MitraSETI
+┌─────────────────┐               ┌──────────────────┐
+│ ViT + OOD       │               │ Rust De-Doppler  │
+│ YOLO Detection  │               │ CNN+Transformer  │
+│ Catalog X-Ref   │               │ RFI Database     │
+└────────┬────────┘               └────────┬─────────┘
+         │                                 │
+         ▼                                 ▼
+   skymap_export.json ──────────▶ Unified Sky Map
+   (RA, Dec, OOD, class)        (Radio + Optical Overlay)
+         │                                 │
+         └────────── astropy ──────────────┘
+               SkyCoord KD-tree
+              cross-matching
+```
+
+A narrowband drifting radio signal coincident with an optically anomalous star is far more interesting than either detection alone.
 
 ---
 
