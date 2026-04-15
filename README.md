@@ -28,6 +28,17 @@
   <a href="https://deepfieldlabs.github.io">Website</a>
 </p>
 
+<p align="center">
+  <a href="https://mitraseti-dev.deepfieldlabs.dev"><img src="https://img.shields.io/badge/☁️_MitraSETI_Cloud-Start_Free-blueviolet?style=for-the-badge" alt="MitraSETI Cloud"></a>
+</p>
+
+> ### ☁️ MitraSETI Cloud
+> AstroLens ML models power the signal classification engine in [MitraSETI Cloud](https://mitraseti-dev.deepfieldlabs.dev) — a managed cloud platform for radio astronomy signal analysis.
+>
+> Upload observation data, run automated detection and classification pipelines, and visualise results in your browser.
+>
+> **Free Explorer tier available** — no installation, no credit card required. Built by [DeepField Labs](https://deepfieldlabs.dev).
+
 ---
 
 ## What Is AstroLens?

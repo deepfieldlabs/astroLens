@@ -4,6 +4,8 @@ Comprehensive documentation for AstroLens -- the AI-Powered Galaxy Anomaly Disco
 
 **Website:** [deepfieldlabs.github.io](https://deepfieldlabs.github.io) | **GitHub:** [samantaba/astroLens](https://github.com/samantaba/astroLens)
 
+> **☁️ [MitraSETI Cloud](https://mitraseti-dev.deepfieldlabs.dev)** — AstroLens ML models power the classification engine in MitraSETI Cloud, a managed cloud platform for radio astronomy signal analysis. Upload your data, run automated pipelines, and visualise results — no setup required. Free Explorer tier available. Built by [DeepField Labs](https://deepfieldlabs.dev).
+
 ---
 
 ## Table of Contents
